@@ -3,28 +3,23 @@ import { Exclude, Expose, Type } from 'class-transformer';
 import { HttpStatus } from '@nestjs/common';
 
 export class ResponseEntity<T> {
-    @Exclude() private readonly _statusCode: HttpStatus;
-    @Exclude() private readonly _message: string;
+    @Exclude() public readonly isSuccess: boolean;
+    @Exclude() public readonly exception?: any;
     @Exclude() private readonly _data?: T;
-    @Exclude() private readonly _exception?: any;
 
-    private constructor(status: HttpStatus, message: string, data?: T, exception?: any) {
-        this._statusCode = status;
-        this._message = message;
+    private constructor(isSuccess: boolean, exception?: any, data?: T) {
+        if (isSuccess && exception) {
+            throw new Error(`InvalidOperation: A result cannot be successful and contain an error`);
+        }
+        if (!isSuccess && !exception) {
+            throw new Error(`InvalidOperation: A failing result needs to contain an error message`);
+        }
+
+        this.isSuccess = isSuccess;
+        this.exception = exception;
         this._data = data;
-        this._exception = exception;
-    }
 
-    @ApiProperty({ enum: HttpStatus, description: 'HTTP status code' })
-    @Expose()
-    get statusCode(): HttpStatus {
-        return this._statusCode;
-    }
-
-    @ApiProperty({ description: 'Response message' })
-    @Expose()
-    get message(): string {
-        return this._message;
+        Object.freeze(this);
     }
 
     @ApiProperty({ description: 'Response data', type: 'object' })
@@ -34,34 +29,49 @@ export class ResponseEntity<T> {
         return this._data;
     }
 
-    static OK(): ResponseEntity<null> {
-        return new ResponseEntity<null>(HttpStatus.OK, 'OK');
+    static ok<T>(data?: T): ResponseEntity<T> {
+        return new ResponseEntity<T>(true, null, data);
     }
 
-    static OK_WITH<T>(data: T): ResponseEntity<T> {
-        return new ResponseEntity<T>(HttpStatus.OK, 'OK', data);
+    static fail<T>(exception: any): ResponseEntity<T> {
+        return new ResponseEntity<T>(false, exception);
     }
 
-    static ERROR(exception: any): ResponseEntity<null> {
-        return new ResponseEntity<null>(
-            exception.getStatus(),
-            exception.message,
-            undefined,
-            exception,
-        );
+    get json(): any {
+        const exception = this.exception;
+        const showDetail = process.env.NODE_ENV !== 'production';
+
+        if (showDetail && this.exception && !this.isSuccess) {
+            const detail = exception?.detail;
+            this.exception.detail = {
+                ...detail,
+                ...{
+                    location:
+                        exception?.__file__ &&
+                        `${exception?.__file__}:${exception?.__line__} (${exception?.__function__})`,
+                    trace: exception?.stack,
+                    version: exception?.version,
+                    build: exception?.build,
+                    hostname: exception?.hostname,
+                    tid: exception?.tid,
+                },
+            };
+        }
+
+        return this.isSuccess
+            ? {
+                  code: HttpStatus.OK,
+                  message: 'OK',
+                  result: this._data,
+              }
+            : {
+                  code: this.exception?.code || HttpStatus.INTERNAL_SERVER_ERROR,
+                  message: exception?.message,
+                  detail: showDetail ? exception?.detail : undefined,
+              };
     }
 
-    static ERROR_WITH<T>(exception: any, data: T): ResponseEntity<T> {
-        return new ResponseEntity<T>(exception.getStatus(), exception.message, data, exception);
-    }
-
-    toJSON() {
-        return {
-            statusCode: this.statusCode,
-            message: this.message,
-            data: this.data,
-            detail: this._exception ? this._exception.detail : undefined,
-            tid: this._exception ? this._exception.tid : undefined,
-        };
+    public toJSON(): any {
+        return this.json;
     }
 }
