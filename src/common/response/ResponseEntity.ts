@@ -39,7 +39,7 @@ export class ResponseEntity<T> {
 
     get json(): any {
         const exception = this.exception;
-        const showDetail = process.env.NODE_ENV !== 'production';
+        const showDetail = process.env.NODE_ENV !== 'prod';
 
         if (showDetail && this.exception && !this.isSuccess) {
             const detail = exception?.detail;
@@ -65,7 +65,7 @@ export class ResponseEntity<T> {
                   result: this._data,
               }
             : {
-                  code: this.exception?.code || HttpStatus.INTERNAL_SERVER_ERROR,
+                  code: this.exception?.status || HttpStatus.INTERNAL_SERVER_ERROR,
                   message: exception?.message,
                   detail: showDetail ? exception?.detail : undefined,
               };

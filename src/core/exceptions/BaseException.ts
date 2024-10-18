@@ -19,7 +19,7 @@ export class BaseException extends HttpException {
 
         const pkg = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'package.json'), 'utf8'));
 
-        const isProduction = process.env.NODE_ENV === 'production';
+        const isProduction = process.env.NODE_ENV === 'prod';
 
         const stack = new Error().stack;
         const callerLine = stack?.split('\n')[2] ?? '';
