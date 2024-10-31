@@ -12,7 +12,7 @@ export class LoggerService {
             format: format.combine(format.timestamp(), format.json()),
             transports: [
                 new DailyRotateFile({
-                    filename: path.join(process.cwd(), 'logs', 'application-%DATE%.log'),
+                    filename: path.join(process.cwd(), 'logs', 'app-%DATE%.log'),
                     datePattern: 'YYYY-MM-DD',
                     zippedArchive: true,
                     maxSize: '20m',
