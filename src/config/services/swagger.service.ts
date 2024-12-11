@@ -3,7 +3,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { INestApplication } from '@nestjs/common';
 
 @Injectable()
-export class SwaggerConfig {
+export class SwaggerService {
     setup(app: INestApplication): void {
         const config = new DocumentBuilder()
             .setTitle('Your API Title')
