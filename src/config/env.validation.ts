@@ -1,5 +1,5 @@
 import { plainToClass } from 'class-transformer';
-import { IsEnum, IsNumber, IsString, validateSync } from 'class-validator';
+import { IsBoolean, IsEnum, IsNumber, IsString, validateSync } from 'class-validator';
 import { Environment } from '@common/enums/environment.enum';
 
 class EnvironmentVariables {
@@ -23,6 +23,12 @@ class EnvironmentVariables {
 
     @IsString()
     DB_DATABASE: string;
+
+    @IsBoolean()
+    DB_SYNCHRONIZE: boolean;
+
+    @IsBoolean()
+    DB_LOGGING: boolean;
 }
 
 export function validate(config: Record<string, unknown>) {
@@ -46,5 +52,7 @@ export default () => ({
         username: process.env.DB_USERNAME,
         password: process.env.DB_PASSWORD,
         schema: process.env.DB_DATABASE,
+        synchronize: process.env.DB_SYNCHRONIZE,
+        logging: process.env.DB_LOGGING,
     },
 });
