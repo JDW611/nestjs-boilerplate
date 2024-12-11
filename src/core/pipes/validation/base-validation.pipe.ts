@@ -10,6 +10,7 @@ export class BaseValidationPipe extends ValidationPipe {
             transform: true,
             transformOptions: {
                 enableImplicitConversion: true,
+                excludeExtraneousValues: true,
             },
             validateCustomDecorators: true,
 
