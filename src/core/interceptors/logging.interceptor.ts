@@ -2,7 +2,6 @@ import { Injectable, NestInterceptor, ExecutionContext, CallHandler } from '@nes
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { LoggerService } from '@shared/services/logger.service';
-import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
@@ -11,14 +10,12 @@ export class LoggingInterceptor implements NestInterceptor {
     intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
         const request = context.switchToHttp().getRequest();
         const { method, url, body, headers } = request;
-        const tid = uuidv4();
         const userAgent = headers['user-agent'] || '';
         const ip = request.ip;
 
         const startTime = Date.now();
 
         this.logger.log('Request received', {
-            tid,
             type: 'REQUEST',
             method,
             url,
@@ -32,7 +29,6 @@ export class LoggingInterceptor implements NestInterceptor {
                 next: data => {
                     const responseTime = Date.now() - startTime;
                     this.logger.log('Request completed', {
-                        tid,
                         type: 'RESPONSE',
                         method,
                         url,
@@ -43,7 +39,6 @@ export class LoggingInterceptor implements NestInterceptor {
                 error: error => {
                     const responseTime = Date.now() - startTime;
                     this.logger.error('Request failed', error.stack, {
-                        tid,
                         type: 'ERROR',
                         method,
                         url,

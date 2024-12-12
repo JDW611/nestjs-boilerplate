@@ -1,5 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { Exclude, Expose, Type } from 'class-transformer';
+import { Exclude } from 'class-transformer';
 import { HttpStatus } from '@nestjs/common';
 
 export class ResponseEntity<T> {
@@ -22,9 +21,6 @@ export class ResponseEntity<T> {
         Object.freeze(this);
     }
 
-    @ApiProperty({ description: 'Response data', type: 'object' })
-    @Expose()
-    @Type(() => Object)
     get data(): T | undefined {
         return this._data;
     }

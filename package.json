@@ -7,7 +7,8 @@
     "license": "UNLICENSED",
     "scripts": {
         "serve": "cross-env NODE_ENV=local nodemon --exec ts-node -r tsconfig-paths/register --files ./src/app.ts",
-        "test": "cross-env NODE_ENV=test TS_NODE_FILES=true mocha --exit -timeout 3000 -r tsconfig-paths/register -r ts-node/register ./test/**/*.test.ts",
+        "test": "jest",
+        "test:dev": "cross-env NODE_ENV=test TS_NODE_FILES=true mocha --exit -timeout 3000 -r tsconfig-paths/register -r ts-node/register ./test/**/*.test.ts",
         "build": "nest build"
     },
     "dependencies": {
@@ -25,6 +26,7 @@
         "pg": "^8.13.0",
         "reflect-metadata": "^0.1.13",
         "rxjs": "^7.8.1",
+        "sqlite3": "^5.1.7",
         "typeorm": "^0.3.20",
         "typeorm-naming-strategies": "^4.1.0",
         "uuid": "^10.0.0",
@@ -71,6 +73,13 @@
             "**/*.(t|j)s"
         ],
         "coverageDirectory": "../coverage",
-        "testEnvironment": "node"
+        "testEnvironment": "node",
+        "moduleNameMapper": {
+            "^@core/(.*)$": "<rootDir>/core/$1",
+            "^@shared/(.*)$": "<rootDir>/shared/$1",
+            "^@config/(.*)$": "<rootDir>/config/$1",
+            "^@common/(.*)$": "<rootDir>/common/$1", 
+            "^@modules/(.*)$": "<rootDir>/modules/$1"  
+        }
     }
 }
