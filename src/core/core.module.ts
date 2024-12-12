@@ -5,10 +5,11 @@ import { LoggingInterceptor } from '@core/interceptors/logging.interceptor';
 import { HttpExceptionFilter } from '@core/filters/http-exception.filter';
 import { TransformInterceptor } from '@core/interceptors/transform.interceptor';
 import { BaseValidationPipe } from '@core/pipes/validation/base-validation.pipe';
+import { getTypeOrmModule } from './database/typeorm/typeorm.module';
 
 @Global()
 @Module({
-    imports: [],
+    imports: [getTypeOrmModule()],
     providers: [
         LoggerService,
         {
