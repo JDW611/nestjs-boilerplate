@@ -1,7 +1,7 @@
 import { CreateDateColumn, DeleteDateColumn, PrimaryColumn, UpdateDateColumn } from 'typeorm';
 import { RootEntity } from '../generic/root.entity';
 import { LocalDateTime } from '@js-joda/core';
-import { DateTimeUtil } from '@shared/utils/DateTimeUtil';
+import { DateTimeUtil } from '@common/utils/DateTimeUtil';
 import { BigintTransformer } from './transformer';
 
 export abstract class BaseTimeEntity extends RootEntity {
