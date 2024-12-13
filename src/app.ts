@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerService } from '@config/services/swagger.service';
 import { ConfigService } from '@config/services/config.service';
-import { LoggerService } from '@shared/services/logger.service';
+import { LoggerService } from '@core/services/logger.service';
 import { ValidationPipe } from '@nestjs/common';
 import { ClassValidatorExceptionFactory } from '@core/exceptions/class-validator/exception.factory';
 
