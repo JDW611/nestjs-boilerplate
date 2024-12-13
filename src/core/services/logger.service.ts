@@ -1,6 +1,5 @@
 import { getTid } from '@core/middleware/app.context';
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import path from 'path';
 import { Logger as TypeOrmLogger } from 'typeorm';
 import { createLogger, format, transports } from 'winston';
@@ -10,8 +9,8 @@ import DailyRotateFile from 'winston-daily-rotate-file';
 export class LoggerService implements TypeOrmLogger {
     private logger;
 
-    constructor(private readonly env: ConfigService) {
-        const nodeEnv = this.env.get('NODE_ENV');
+    constructor() {
+        const nodeEnv = process.env.NODE_ENV;
         const isLocalEnv = ['local', 'dev', undefined].includes(nodeEnv);
         const level = isLocalEnv ? 'debug' : 'info';
 
