@@ -29,11 +29,5 @@ describe('ClassValidatorExceptionFactory 테스트', () => {
         expect(() => factory.throw()(errors)).toThrow(
             InvalidRequestBodyException('유효하지 않은 데이터입니다. 확인 후 다시 요청해주세요.'),
         );
-
-        try {
-            factory.throw()(errors);
-        } catch (error) {
-            expect(error.message).toBe('유효하지 않은 데이터입니다. 확인 후 다시 요청해주세요.');
-        }
     });
 });
