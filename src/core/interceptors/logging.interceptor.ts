@@ -38,12 +38,17 @@ export class LoggingInterceptor implements NestInterceptor {
                 },
                 error: error => {
                     const responseTime = Date.now() - startTime;
-                    this.logger.error('Request failed', error.stack, {
+                    const { detail, errorCode } = error;
+
+                    this.logger.error('Request failed', {
                         type: 'ERROR',
+                        status: errorCode.status,
+                        code: errorCode.code,
+                        message: errorCode.message,
                         method,
                         url,
                         responseTime,
-                        error: error.message,
+                        detail,
                     });
                 },
             }),

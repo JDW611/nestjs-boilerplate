@@ -45,11 +45,6 @@ export class ResponseEntity<T> {
                     location:
                         exception?.__file__ &&
                         `${exception?.__file__}:${exception?.__line__} (${exception?.__function__})`,
-                    trace: exception?.stack,
-                    version: exception?.version,
-                    build: exception?.build,
-                    hostname: exception?.hostname,
-                    tid: exception?.tid,
                 },
             };
         }
