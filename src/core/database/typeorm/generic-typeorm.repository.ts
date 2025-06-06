@@ -1,8 +1,8 @@
 import { Inject } from '@nestjs/common';
 import { GenericRepository } from '../generic/generic.repository';
 import { RootEntity } from '../generic/root.entity';
-import { TransactionManager } from './transaction-manager';
 import { EntityTarget, FindOneOptions, Repository } from 'typeorm';
+import { TransactionManager } from './transaction-manager';
 
 export abstract class GenericTypeOrmRepository<T extends RootEntity>
     implements GenericRepository<T>
