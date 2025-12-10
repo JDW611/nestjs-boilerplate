@@ -1,20 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { ClsService } from 'nestjs-cls';
 import path from 'path';
-import { Logger as TypeOrmLogger } from 'typeorm';
 import { createLogger, format, transports } from 'winston';
 import DailyRotateFile from 'winston-daily-rotate-file';
 
 @Injectable()
-export class LoggerService implements TypeOrmLogger {
-    private logger;
+export class LoggerService {
+    private appLogger;
+    private dbLogger;
 
     constructor(private readonly cls: ClsService) {
         const nodeEnv = process.env.NODE_ENV;
         const isLocalEnv = ['local', 'dev', undefined].includes(nodeEnv);
         const level = isLocalEnv ? 'debug' : 'info';
 
-        this.logger = createLogger({
+        this.appLogger = createLogger({
             level,
             transports: [
                 new DailyRotateFile({
@@ -28,6 +28,27 @@ export class LoggerService implements TypeOrmLogger {
                 new transports.Console({
                     format: this.getTextFormat(),
                 }),
+            ],
+        });
+
+        this.dbLogger = createLogger({
+            level,
+            transports: [
+                new DailyRotateFile({
+                    filename: path.join(process.cwd(), 'logs', 'db-%DATE%.log'),
+                    datePattern: 'YYYY-MM-DD',
+                    zippedArchive: true,
+                    maxSize: '20m',
+                    maxFiles: '14d',
+                    format: this.getJsonFormat(),
+                }),
+                ...(isLocalEnv
+                    ? [
+                          new transports.Console({
+                              format: this.getTextFormat(),
+                          }),
+                      ]
+                    : []),
             ],
         });
     }
@@ -60,49 +81,67 @@ export class LoggerService implements TypeOrmLogger {
             return context;
         }
     }
+    // ----------------------
+    // APP LOG
+    // ----------------------
     log(message: string, context?: any) {
-        this.logger.info(message, this.addContext(context));
+        this.appLogger.info(message, this.addContext(context));
     }
 
     error(message: string, context?: any) {
-        this.logger.error(message, this.addContext(context));
+        this.appLogger.error(message, this.addContext(context));
     }
 
     warn(message: string, context?: any) {
-        this.logger.warn(message, this.addContext(context));
+        this.appLogger.warn(message, this.addContext(context));
     }
 
     debug(message: string, context?: any) {
-        this.logger.debug(message, this.addContext(context));
+        this.appLogger.debug(message, this.addContext(context));
     }
 
+    // ----------------------
+    // DB LOG AWARE
+    // ----------------------
     logQuery(query: string, parameters?: any[]): void {
-        this.debug('Database query', { type: 'DB_QUERY', query, parameters });
+        this.dbLogger.debug('Database query', {
+            type: 'DB_QUERY',
+            query,
+            parameters: this.sanitizeParams(parameters),
+        });
     }
 
     logQueryError(error: string | Error, query: string, parameters?: any[]): void {
-        this.error('Database query error', {
+        this.dbLogger.error('Database query error', {
             type: 'DB_QUERY_ERROR',
             query,
-            parameters,
+            parameters: this.sanitizeParams(parameters),
             error: error instanceof Error ? error.stack : error,
         });
     }
 
     logQuerySlow(time: number, query: string, parameters?: any[]): void {
-        this.warn('Slow query detected', {
+        this.dbLogger.warn('Slow query', {
             type: 'DB_SLOW_QUERY',
             executionTime: time,
             query,
-            parameters,
+            parameters: this.sanitizeParams(parameters),
         });
     }
 
     logMigration(message: string): void {
-        this.log(message, { type: 'DB_MIGRATION' });
+        this.dbLogger.info(message, { type: 'DB_MIGRATION' });
     }
 
     logSchemaBuild(message: string): void {
-        this.log(message, { type: 'DB_SCHEMA' });
+        this.dbLogger.info(message, { type: 'DB_SCHEMA' });
+    }
+
+    private sanitizeParams(params?: any[]) {
+        if (!params) return params;
+
+        return params.map(v =>
+            typeof v === 'string' && v.length > 200 ? '[LargeString omitted]' : v,
+        );
     }
 }

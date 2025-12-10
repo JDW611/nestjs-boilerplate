@@ -1,6 +1,6 @@
 import { Injectable, OnApplicationShutdown } from '@nestjs/common';
 import { LoggerService } from '@core/services/logger.service';
-import { DataSource } from 'typeorm';
+import { MikroORM } from '@mikro-orm/core';
 
 /**
  * 애플리케이션 종료 시 리소스를 안전하게 정리하는 매니저
@@ -12,7 +12,7 @@ import { DataSource } from 'typeorm';
  */
 @Injectable()
 export class ShutDownManager implements OnApplicationShutdown {
-    constructor(private readonly logger: LoggerService, private readonly dataSource: DataSource) {}
+    constructor(private readonly logger: LoggerService, private readonly orm: MikroORM) {}
 
     async onApplicationShutdown(signal: string) {
         this.logger.log(
@@ -24,9 +24,9 @@ export class ShutDownManager implements OnApplicationShutdown {
         );
         await Promise.resolve().then(async () => {
             // database
-            if (this.dataSource.isInitialized) {
-                await this.dataSource.destroy();
-                this.logger.log('Destroyed DataSource :)');
+            if (this.orm) {
+                await this.orm.close(true);
+                this.logger.log('Closed MikroORM :)');
             }
             this.logger.log('Finish Resources Close...');
         });
