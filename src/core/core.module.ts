@@ -4,9 +4,7 @@ import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { LoggingInterceptor } from '@core/interceptors/logging.interceptor';
 import { HttpExceptionFilter } from '@core/filters/http-exception.filter';
 import { TransformInterceptor } from '@core/interceptors/transform.interceptor';
-// import { ShutDownManager } from './util/shutdown.manager';
-// import { AlsModule } from './cls/cls.module';
-// import { TransactionManager } from './database/typeorm/transaction-manager';
+import { ShutDownManager } from './util/shutdown.manager';
 import { MikroOrmCustomModule } from './database/mikroorm/mikroorm.module';
 import { MikroOrmLoggerAdapter } from './util/mikroorm-logger.adapter';
 
@@ -20,7 +18,7 @@ const filters: ClassProvider[] = [{ provide: APP_FILTER, useClass: HttpException
 @Global()
 @Module({
     imports: [MikroOrmCustomModule],
-    providers: [...providers, ...interceptors, ...filters],
+    providers: [ShutDownManager, ...providers, ...interceptors, ...filters],
     exports: [...providers],
 })
 export class CoreModule {}
