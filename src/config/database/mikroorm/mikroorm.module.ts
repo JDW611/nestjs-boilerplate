@@ -3,8 +3,8 @@ import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { PostgreSqlDriver } from '@mikro-orm/postgresql';
 import { Module } from '@nestjs/common';
 import { TsMorphMetadataProvider } from '@mikro-orm/reflection';
-import { MikroOrmLoggerAdapter } from '@core/util/mikroorm-logger.adapter';
-import { LoggerService } from '@core/services/logger.service';
+import { MikroOrmLoggerAdapter } from '@common/utils/mikroorm-logger.adapter';
+import { LoggerService } from '@common/services/logger.service';
 
 @Module({
     imports: [

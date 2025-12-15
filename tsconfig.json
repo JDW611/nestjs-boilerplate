@@ -22,7 +22,6 @@
         "esModuleInterop": true,
         "resolveJsonModule": true,
         "paths": {
-            "@core/*": ["src/core/*"],
             "@shared/*": ["src/shared/*"],
             "@modules/*": ["src/modules/*"],
             "@config/*": ["src/config/*"],

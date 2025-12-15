@@ -1,5 +1,5 @@
 import { LogContext, Logger, LoggerNamespace } from '@mikro-orm/core';
-import { LoggerService } from '@core/services/logger.service';
+import { LoggerService } from '@common/services/logger.service';
 import sqlFormatter from 'sql-formatter';
 
 export class MikroOrmLoggerAdapter implements Logger {

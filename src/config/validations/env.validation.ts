@@ -51,7 +51,23 @@ export class EnvironmentVariables {
 }
 
 export function validate(config: Record<string, unknown>) {
-    const validatedConfig = plainToClass(EnvironmentVariables, config, {
+    const intermediateConfig = {
+        database: {
+            host: config.DB_HOST,
+            port: config.DB_PORT,
+            username: config.DB_USERNAME,
+            password: config.DB_PASSWORD,
+            database: config.DB_DATABASE,
+            synchronize: config.DB_SYNCHRONIZE,
+            logging: config.DB_LOGGING,
+        },
+        app: {
+            port: config.PORT,
+            environment: config.NODE_ENV,
+        },
+    };
+
+    const validatedConfig = plainToClass(EnvironmentVariables, intermediateConfig, {
         enableImplicitConversion: true,
     });
 
@@ -63,19 +79,5 @@ export function validate(config: Record<string, unknown>) {
         throw new Error(errors.toString());
     }
 
-    return {
-        database: {
-            host: config.DB_HOST,
-            port: parseInt(config.DB_PORT as string, 10),
-            username: config.DB_USERNAME,
-            password: config.DB_PASSWORD,
-            database: config.DB_DATABASE,
-            synchronize: config.DB_SYNCHRONIZE,
-            logging: config.DB_LOGGING,
-        },
-        app: {
-            port: parseInt(config.PORT as string, 10),
-            environment: config.NODE_ENV as Environment,
-        },
-    };
+    return validatedConfig;
 }

@@ -1,5 +1,5 @@
 import { ErrorResponseDto, SuccessResponseDto } from '@common/response';
-import { InvalidRequestBodyException } from '@core/exceptions/service.exception';
+import { InvalidRequestBodyException } from '@common/exceptions/service.exception';
 import { Controller, Get, HttpCode, HttpStatus } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 

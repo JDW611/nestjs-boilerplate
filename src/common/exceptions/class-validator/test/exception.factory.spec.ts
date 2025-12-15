@@ -1,6 +1,6 @@
 import { ValidationError } from 'class-validator';
 import { ClassValidatorExceptionFactory } from '../exception.factory';
-import { InvalidRequestBodyException } from '@core/exceptions/service.exception';
+import { InvalidRequestBodyException } from '@common/exceptions/service.exception';
 
 describe('ClassValidatorExceptionFactory 테스트', () => {
     const factory = new ClassValidatorExceptionFactory();
