@@ -1,5 +1,5 @@
 import { ErrorCode, ErrorCodes } from '@common/dto/error/error-code.dto';
-import { BaseException } from '@core/exceptions/base.exception';
+import { BaseException } from '@common/exceptions/base.exception';
 
 export class ServiceException extends BaseException {
     constructor(readonly errorCode: ErrorCode, message?: string, detail?: any) {

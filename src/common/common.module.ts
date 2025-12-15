@@ -1,12 +1,11 @@
 import { ClassProvider, Global, Module } from '@nestjs/common';
-import { LoggerService } from '@core/services/logger.service';
+import { LoggerService } from './services/logger.service';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
-import { LoggingInterceptor } from '@core/interceptors/logging.interceptor';
-import { HttpExceptionFilter } from '@core/filters/http-exception.filter';
-import { TransformInterceptor } from '@core/interceptors/transform.interceptor';
-import { ShutDownManager } from './util/shutdown.manager';
-import { MikroOrmCustomModule } from './database/mikroorm/mikroorm.module';
-import { MikroOrmLoggerAdapter } from './util/mikroorm-logger.adapter';
+import { LoggingInterceptor } from './interceptors/logging.interceptor';
+import { HttpExceptionFilter } from './filters/http-exception.filter';
+import { TransformInterceptor } from './interceptors/transform.interceptor';
+import { ShutDownManager } from './utils/shutdown.manager';
+import { MikroOrmLoggerAdapter } from './utils/mikroorm-logger.adapter';
 
 const providers = [LoggerService, MikroOrmLoggerAdapter];
 const interceptors: ClassProvider[] = [
@@ -17,8 +16,8 @@ const filters: ClassProvider[] = [{ provide: APP_FILTER, useClass: HttpException
 
 @Global()
 @Module({
-    imports: [MikroOrmCustomModule],
+    imports: [],
     providers: [ShutDownManager, ...providers, ...interceptors, ...filters],
     exports: [...providers],
 })
-export class CoreModule {}
+export class CommonModule {}

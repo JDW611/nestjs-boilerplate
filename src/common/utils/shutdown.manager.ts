@@ -1,5 +1,5 @@
 import { Injectable, OnApplicationShutdown } from '@nestjs/common';
-import { LoggerService } from '@core/services/logger.service';
+import { LoggerService } from '@common/services/logger.service';
 import { MikroORM } from '@mikro-orm/core';
 
 /**
